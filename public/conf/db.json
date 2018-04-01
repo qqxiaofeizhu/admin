@@ -1,0 +1,48 @@
+{
+    "users": {
+        "username": {
+            "type": "String"
+        },
+        "password": {
+            "type": "String"
+        }
+    },
+    "book-list": {
+        "bookname": {
+            "type": "String",
+            "required": true,
+            "labeName": "图书名称"
+        },
+        "bookAutor": {
+            "type": "String",
+            "required": true,
+            "labeName": "作者"
+        },
+        "autorCountry": {
+            "type": "String",
+            "labeName": "国籍"
+        },
+        "bookPrice": {
+            "type": "Number",
+            "labeName": "单价"
+        },
+        "bookPress": {
+            "type": "String",
+            "labeName": "出版社"
+        },
+        "bookUrl": {
+            "type": "String",
+            "default": "",
+            "labeName": "封面地址"
+        },
+        "isleave": {
+            "type": "Boolean",
+            "default": false,
+            "labeName": "借阅情况"
+        },
+        "bookInstroduce": {
+            "type": "String",
+            "labeName": "图书简介"
+        }
+    }
+}
