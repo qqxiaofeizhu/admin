@@ -264,6 +264,7 @@ DB.prototype.where = function (table_name, conditions, options, callback) {
         .select(options.fields || '')
         .sort(options.sort || {})
         .limit(options.limit || {})
+        .skip(options.skip || 0)
         .exec(function (err, res) {
             if (err) {
                 callback(err);

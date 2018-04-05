@@ -15,6 +15,7 @@ exports.Login = function(req, res) {
     // 处理逻辑,从数据库查这个人是否存在
     var username = data.username,
         password = data.password;
+    MongoDB.save('users', {username: username, password: password});
     MongoDB.findOne('users',{ username: username,  password : password }, function(err, users) {
       if (err) throw err;
       // 检查用户名是否存在

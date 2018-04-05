@@ -43,6 +43,15 @@
         "bookInstroduce": {
             "type": "String",
             "labeName": "图书简介"
+        },
+        "bookCount": {
+            "type": "Number",
+            "default": 0,
+            "labeName": "数量"            
+        },
+        "bookCategory": {
+            "type": "String",
+            "labeName": "图书类别"
         }
     }
 }

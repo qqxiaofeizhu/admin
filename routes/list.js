@@ -7,18 +7,29 @@ var db = require('../public/conf/db')
  * list首页接口
  */
 exports.getBookList = function (req, res, next) {
-    MongoDB.find('book-list', {}, function(err, resp) {
+    const limit = 2;
+    const p = req.body.p;
+    let skip = (p -1) * limit;
+    console.log(limit, skip);
+    MongoDB.where('book-list', {}, {limit: limit, skip: skip}, function(err, resp) {
         if (err) throw err;
-        return res.json({
-            code: 0,
-            message: '获取数据成功',
-            data: {
-                bookList: resp
-            }
-        })
+        MongoDB.count('book-list', {}, function(err, count) {
+            if (err) throw err;
+            return res.json({
+                code: 0,
+                message: '获取数据成功',
+                data: {
+                    data: resp,
+                    count: count,
+                    p: p
+                }
+            })
+        })      
     })
 }
-
+/** 
+ * 增加图书
+*/
 exports.addBookList = function(req, res, next) {
     // console.log(req.body)
     // 1.拿到数据先查下数据库是否有这个数据
@@ -66,6 +77,7 @@ exports.getAllBookEntry = function(req, res, next) {
     // 数据格式
     // fileds: {type}
     let result = [];
+    console.log(data);
     for (let key in data) {
         if (data.hasOwnProperty(key) === true) {
             let fileds = {};
@@ -92,5 +104,39 @@ exports.getAllBookEntry = function(req, res, next) {
         message: '获取成功',
         status: true,
         data: result
+    })
+}
+/**
+ * 编辑选中的图书信息
+ */
+exports.editorSelectBookName = function(req, res, next) {
+    // 首先查下数据库中是否有该id
+    const id = req.body._id;
+    const data = req.body;
+    // console.log(data);
+    MongoDB.findById('book-list', {_id: id}, function(err, resp) {
+        if (err) throw err;
+        if (resp) {
+            // 证明已经找到
+            MongoDB.update('book-list', {_id: id}, data, function(err, response) {
+                if (err) throw err;
+                console.log(response)
+                if (response) {
+                    return res.json({
+                        code: 0,
+                        status: true,
+                        message: '更新成功',
+                        data: null
+                    })
+                } else {
+                    return res.json({
+                        code: 0,
+                        status: false,
+                        message: '更新失败',
+                        data: null
+                    })                    
+                }
+            })
+        }
     })
 }
