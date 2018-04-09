@@ -10,7 +10,17 @@ exports.getBookList = function (req, res, next) {
     const limit = 2;
     const p = req.body.p;
     let skip = (p -1) * limit;
-    console.log(limit, skip);
+    let data = db['book-list'];
+    let result = [];
+    for (let key in data) {
+        if (data.hasOwnProperty(key) === true) {
+            let fileds = {};
+            fileds.labeName = data[key]['labeName'];
+            fileds.fieldName = key;
+            result.push(fileds)
+        }
+    }
+    result.push({fieldName: 'operate', labeName: '操作'});
     MongoDB.where('book-list', {}, {limit: limit, skip: skip}, function(err, resp) {
         if (err) throw err;
         MongoDB.count('book-list', {}, function(err, count) {
@@ -20,6 +30,7 @@ exports.getBookList = function (req, res, next) {
                 message: '获取数据成功',
                 data: {
                     data: resp,
+                    header: result,
                     count: count,
                     p: p
                 }

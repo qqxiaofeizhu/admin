@@ -53,5 +53,18 @@
             "type": "String",
             "labeName": "图书类别"
         }
+    },
+    "notice": {
+        "username": {
+            "type": "String"
+        },
+        "title": {
+            "type": "String",
+            "labeName": "标题"
+        },
+        "noticeValue": {
+            "type": "String",
+            "labeName": "公告内容"
+        }      
     }
 }
