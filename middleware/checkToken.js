@@ -5,23 +5,24 @@ exports.checkToken = function (req, res, next) {
     // 解析token
     if (token) {
         jwt.verify(token, app.secret, function (err, decoded) {
-            if (err) {
+            if (err) throw err;
+            if (decoded) {
+                req.api_user = decoded;
+                next()
+            } else {
                 return res.json({
                     code: 0,
                     type: false,
-                    message: 'token信息错误',
+                    message: '登录验证失败，请重试！',
                     data: null
                 })
-            } else {
-                req.api_user = decoded;
-                next()
             }
         })
     } else {
         return res.status(200).send({
             code: 0,
             type: false,
-            message: '没有提供token',
+            message: '请先登录',
             data: null
         })
     }

@@ -21,7 +21,10 @@ router.get('/get-all-management-personnel', token.checkToken, users.getAllManage
 router.post('/delete-users', token.checkToken, users.deleteUsers);
 // 设置为超级管理员
 router.post('/set-ordinary-to-super',token.checkToken,  users.setOrdinaryToSuper);
-
+// 还书
+router.post('/return-the-book', token.checkToken, users.ReturnTheBook);
+// 所有借阅书籍
+router.post('/get-user-all-borrow-books', token.checkToken, users.getUserAllBorrowBooks);
 
 // 获取录入数据接口
 router.get('/get-all-book-entry', list.getAllBookEntry);
@@ -33,5 +36,5 @@ router.post('/delate-booklist-by-id', token.checkToken, list.delateBooklistById)
 // 编辑图书接口
 router.post('/editor-select-book-name', token.checkToken,  list.editorSelectBookName);
 // 借阅
-router.post('/borrowing-by-id', token.checkToken, list.borrowingById)
+router.post('/borrowing-by-id', token.checkToken, list.borrowingById);
 module.exports = router;

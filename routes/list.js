@@ -164,16 +164,15 @@ exports.borrowingById = function(req, res) {
         // 找到了这本书
         if (err) throw err;
         if (books) {
-            console.log(books, 'books')
             // 如果下面没这个id，将这个id放到数组中去
             MongoDB.findOne('users', {username: username}, function(err, user) {
                 if (err) throw err;
                 // 找到该用户
                 if (user) {
-                    if (user.bookIds.length > 3) {
+                    if (user.bookIds.length > 10) {
                         return res.json({
                             code: 0,
-                            message: '每个人最多可以借2本！',
+                            message: '每个人最多可以借10本！',
                             type: false,
                             data: null
                         })                        
@@ -201,14 +200,27 @@ exports.borrowingById = function(req, res) {
                                         type: true,
                                         data: null
                                     })
+                                } else {
+                                    return res.json({
+                                        code: 0,
+                                        message: '借阅失败',
+                                        type: false,
+                                        data: null
+                                    })                                    
                                 }
                             })
+                        } else {
+                            return res.json({
+                                code: 0,
+                                message: '借阅失败',
+                                type: false,
+                                data: null
+                            })
                         }
-                        console.log(updatedUser, 'updatedUser')
                     })
-                    // console.log(user.bookIds, 'user.bookIds')
                 }
             })
         }
     })
 }
+
