@@ -11,7 +11,6 @@ var config = require('./config');
 
 
 var index = require('./routes/index');
-var users = require('./routes/users');
 // mongoose.connect('mongodb://localhost/db')
 var app = express();
 // view engine setup
@@ -30,7 +29,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bookstore/', index);
-app.use('/bookstore/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

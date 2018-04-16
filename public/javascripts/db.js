@@ -22,7 +22,7 @@ mongoose.connection.on('connected', function (err) {
     if (err) {
         logger.error('Database connection failure')
     }
-    console.log('db is connected!');
+    // console.log('db is connected!');
 });
 
 mongoose.connection.on('error', function (err) {
@@ -51,15 +51,15 @@ var DB = function () {
  * @param table_name 表名称(集合名称)
  */
 DB.prototype.getConnection = function (table_name) {
-    console.log('req.body is ' + table_name);
+    // console.log('req.body is ' + table_name);
     if (!table_name) return;
     if (!this.tabConf[table_name]) {
         logger.error('No table structure');
         return false;
     }
-    console.log(this.mongoClient)
+    // console.log(this.mongoClient)
     var client = this.mongoClient[table_name];
-    // console.log(client, 'client is init!');
+    // // console.log(client, 'client is init!');
     if (!client) {
         //构建用户信息表结构
         var nodeSchema = new mongoose.Schema(this.tabConf[table_name]);
@@ -69,7 +69,7 @@ DB.prototype.getConnection = function (table_name) {
 
         this.mongoClient[table_name] = client;
     }
-    // console.log(client, 'client build success!');
+    // // console.log(client, 'client build success!');
     return client;
 };
 
@@ -87,7 +87,7 @@ DB.prototype.save = function (table_name, fields, callback) {
 
     var err_num = 0;
     for (var i in fields) {
-        console.log(this.tabConf[table_name][i])
+        // console.log(this.tabConf[table_name][i])
         if (!this.tabConf[table_name][i]) err_num ++;
     }
     if (err_num > 0) {
@@ -98,7 +98,7 @@ DB.prototype.save = function (table_name, fields, callback) {
     var node_model = this.getConnection(table_name);
     var mongooseEntity = new node_model(fields);
     mongooseEntity.save(function (err, res) {
-        console.log(err)
+        // console.log(err)
         if (err) {
             if (callback) callback(err);
         } else {

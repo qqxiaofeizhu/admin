@@ -1,4 +1,3 @@
-// var BookMessage = require('../model/booklist');
 var app = require('../config');
 var MongoDB = require('../public/javascripts/db');
 var db = require('../public/conf/db')
@@ -7,7 +6,7 @@ var db = require('../public/conf/db')
  * list首页接口
  */
 exports.getBookList = function (req, res, next) {
-    const limit = 2;
+    const limit = 10;
     const p = req.body.p;
     let skip = (p -1) * limit;
     let data = db['book-list'];
@@ -146,6 +145,68 @@ exports.editorSelectBookName = function(req, res, next) {
                         message: '更新失败',
                         data: null
                     })                    
+                }
+            })
+        }
+    })
+}
+
+/**
+ * 借阅
+ */
+exports.borrowingById = function(req, res) {
+    // 书的id
+    // MongoDB.updateData('users', {}, {$set: {bookIds: [], booknames: []}});
+    const id = req.body.id;
+    // 用户的用户名
+    const username = req.api_user.username;
+    MongoDB.findById('book-list', {_id: id}, function(err, books) {
+        // 找到了这本书
+        if (err) throw err;
+        if (books) {
+            console.log(books, 'books')
+            // 如果下面没这个id，将这个id放到数组中去
+            MongoDB.findOne('users', {username: username}, function(err, user) {
+                if (err) throw err;
+                // 找到该用户
+                if (user) {
+                    if (user.bookIds.length > 3) {
+                        return res.json({
+                            code: 0,
+                            message: '每个人最多可以借2本！',
+                            type: false,
+                            data: null
+                        })                        
+                    };
+                    for (let [key, item] of user.bookIds.entries()) {
+                        if (item.toString() == books._id) {
+                            return res.json({
+                                code: 0,
+                                message: '您已借阅过该书，不能再次借阅！',
+                                type: false,
+                                data: null
+                            })
+                        }
+                    }
+                    MongoDB.updateData('users', {username: username}, {$addToSet: {bookIds: books._id, booknames: books.bookname}}, function(err, updatedUser) {
+                        if (err) throw err;
+                        // 找到对应值
+                        if (updatedUser) {
+                            MongoDB.updateData('book-list', {_id: id},  {$set: {bookCount: books.bookCount - 1}}, function(err, updateBooks){
+                                if (err) throw err;
+                                if (updateBooks) {
+                                    return res.json({
+                                        code: 0,
+                                        message: '借阅成功',
+                                        type: true,
+                                        data: null
+                                    })
+                                }
+                            })
+                        }
+                        console.log(updatedUser, 'updatedUser')
+                    })
+                    // console.log(user.bookIds, 'user.bookIds')
                 }
             })
         }

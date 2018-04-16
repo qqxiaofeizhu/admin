@@ -5,6 +5,18 @@
         },
         "password": {
             "type": "String"
+        },
+        "isAdmin": {
+            "type": "Number",
+            "default": 0
+        },
+        "bookIds": {
+            "type": "Array",
+            "default": "[]"
+        },
+        "booknames": {
+            "type": "Array",
+            "default": "[]"
         }
     },
     "book-list": {
