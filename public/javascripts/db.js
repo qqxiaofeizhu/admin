@@ -22,7 +22,7 @@ mongoose.connection.on('connected', function (err) {
     if (err) {
         logger.error('Database connection failure')
     }
-    // console.log('db is connected!');
+    console.log('db is connected!');
 });
 
 mongoose.connection.on('error', function (err) {

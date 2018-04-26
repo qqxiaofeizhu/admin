@@ -79,12 +79,7 @@ exports.register = function (req, res) {
       if (Object.is(data.password, data.repassword)) {
         // 存入数据库
         delete data.repassword;
-        console.log('1')
-        console.log(data)
-        MongoDB.save('users', {
-          username: data.username,
-          password: data.password
-        }, function (err, resp) {
+        MongoDB.save('users', data, function (err, resp) {
           if (err) throw err;
           if (resp) {
             return res.json({
@@ -222,7 +217,7 @@ exports.deleteUsers = function (req, res) {
  * 得到当前用户信息
  */
 exports.getUserMessage = function (req, res) {
-  console.log(req.api_user)
+  // console.log(req.api_user)
   MongoDB.findOne('users', {
     username: req.api_user.username
   }, function (err, user) {
@@ -255,22 +250,18 @@ exports.getUserMessage = function (req, res) {
  */
 
 exports.getUserAllBorrowBooks = function (req, res) {
-  const id = req.body.id;
-  MongoDB.findById('users', {
-    _id: id
+  const username = req.api_user.username;
+  MongoDB.findOne('users', {
+    username: username
   }, function (err, borrowBooks) {
     if (err) throw err;
     if (borrowBooks) {
-      let bookdata = [];
-      for (let [index, item] of borrowBooks.bookIds.entries()) {
-        let bookitem = {};
-        bookitem.id = item || '';
-        bookditem.bookname = borrowBooks.booknames[index] || '';
-        bookdata.push(bookitem);
-      }
       return res.json({
         code: 0,
-        data: bookdata,
+        data: {
+          bookIds: borrowBooks.bookIds,
+          booknames:  borrowBooks.booknames
+        },
         message: '获取借阅数据成功！',
         type: true
       })
@@ -290,63 +281,101 @@ exports.getUserAllBorrowBooks = function (req, res) {
  */
 exports.ReturnTheBook = function (req, res) {
   // 还书的id
-  const usernameId = req.body.id
+  const username = req.api_user.username;
   const bookId = req.body.bookId;
-  MongoDB.findById('users', {
-    _id: usernameId
+  MongoDB.findOne('users', {
+    username: username
   }, function (err, user) {
     if (err) throw err;
     // 拿到找到的用户
     if (user) {
-      if (user.includes(bookId)) {
-        // 查询到的数据包含传入的书籍id
-        MongoDB.findById('book-list', {
-          _id: bookId
-        }, function (err, theBook) {
-          if (err) throw err;
-          if (theBook) {
-            MongoDB.update('users', {
-              _id: user._id
-            }, {
-              $pull: {
-                bookIds: theBook._id,
-                booknames: theBook.bookname
-              }
-            });
-            MongoDB.updateData('book-list', {
-              _id: bookId
-            }, {
-              $set: {
-                bookCount: theBook.bookCount + 1
-              }
-            }, function (err, updateBook) {
-              if (err) throw err;
-              if (updateBook) {
-                return res.json({
-                  code: 0,
-                  data: null,
-                  message: '还书成功！',
-                  type: true
-                })
-              } else {
-                return res.json({
-                  code: 0,
-                  data: null,
-                  message: '还书失败！',
-                  type: false
-                })
-              }
+      for (let [key,item] of user.bookIds.entries()) {
+        if (item[0].toString() == bookId) {
+          // 查询到的数据包含传入的书籍id
+          // console.log('1')
+          MongoDB.findById('book-list', {
+            _id: bookId
+          }, function (err, theBook) {
+            if (err) throw err;
+            if (theBook) {
+              // console.log(theBook, '23123');
+              MongoDB.updateData('users', {
+                _id: user._id
+              }, {
+                $pull: {
+                  bookIds: theBook._id,
+                  booknames: theBook.bookname
+                }
+              });
+              MongoDB.updateData('book-list', {
+                _id: bookId
+              }, {
+                $set: {
+                  bookCount: theBook.bookCount + 1,
+                  isleave: theBook.isleave - 1
+                }
+              }, function (err, updateBook) {
+                if (err) throw err;
+                if (updateBook) {
+                  return res.json({
+                    code: 0,
+                    data: null,
+                    message: '还书成功！',
+                    type: true
+                  })
+                }
+              })
+            } else {
+              return res.json({
+                code: 0,
+                data: null,
+                message: '图书不存在,请联系管理员',
+                type: false
+              })              
+            }
+          })
+        }
+      }
+    }
+  })
+}
+
+/**
+ * 修改密码
+ */
+exports.ChangeUserPassword = function(req, res) {
+  const username = req.body.username;
+  const encrypted = req.body.encrypted;
+  const password = req.body.password;
+  MongoDB.findOne('users', {username: username}, function(err, findUser) {
+    if (err) throw err;
+    if (findUser) {
+      if (Object.is(encrypted, findUser.encrypted)) {
+        MongoDB.updateData('users', {username:username}, {$set:{password: password}}, function(err, updateUser){
+          if (updateUser) {
+            return res.json({
+              code: 0,
+              message:' 密码重置成功',
+              type:true,
+              data: null
+            })
+          } else {
+            return res.json({
+              code: 0,
+              message:' 密码重置失败',
+              type:true,
+              data: null
             })
           }
         })
       } else {
         return res.json({
           code: 0,
-          data: null,
-          message: '没找到该图书信息！请联系管理员',
-          type: false
-        })
+          message:' 密保不正确',
+          type:true,
+          data: null
+        })        
       }
-    }
+    } 
   })
 }

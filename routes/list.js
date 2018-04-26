@@ -191,7 +191,7 @@ exports.borrowingById = function(req, res) {
                         if (err) throw err;
                         // 找到对应值
                         if (updatedUser) {
-                            MongoDB.updateData('book-list', {_id: id},  {$set: {bookCount: books.bookCount - 1}}, function(err, updateBooks){
+                            MongoDB.updateData('book-list', {_id: id},  {$set: {bookCount: books.bookCount - 1, isleave: books.isleave + 1}}, function(err, updateBooks){
                                 if (err) throw err;
                                 if (updateBooks) {
                                     return res.json({

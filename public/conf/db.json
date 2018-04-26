@@ -17,6 +17,10 @@
         "booknames": {
             "type": "Array",
             "default": "[]"
+        },
+        "encrypted": {
+            "type": "String",
+            "default": ""
         }
     },
     "book-list": {
@@ -48,8 +52,8 @@
             "labeName": "封面地址"
         },
         "isleave": {
-            "type": "Boolean",
-            "default": false,
+            "type": "Number",
+            "default": 0,
             "labeName": "借阅情况"
         },
         "bookInstroduce": {
