@@ -10,6 +10,22 @@ exports.getBookList = function (req, res, next) {
     const p = req.body.p;
     let skip = (p -1) * limit;
     let data = db['book-list'];
+    const bookCategory = req.body.bookCategory; // 筛选条件之一
+    const searchBookname = req.body.searchBookname;
+    let conditions = {
+        bookCategory: bookCategory,
+        bookname: {$regex: new RegExp(searchBookname)}
+    }
+    if (bookCategory == '' && searchBookname == '') {
+        conditions = {}
+    };
+    if (bookCategory == '') {
+        delete conditions.bookCategory;
+    }
+    if (searchBookname == '') {
+        delete conditions.bookname;
+    }
+    console.log(conditions, '12323');
     let result = [];
     for (let key in data) {
         if (data.hasOwnProperty(key) === true) {
@@ -20,9 +36,10 @@ exports.getBookList = function (req, res, next) {
         }
     }
     result.push({fieldName: 'operate', labeName: '操作'});
-    MongoDB.where('book-list', {}, {limit: limit, skip: skip}, function(err, resp) {
+    console.log(conditions);
+    MongoDB.where('book-list', conditions, {limit: limit, skip: skip}, function(err, resp) {
         if (err) throw err;
-        MongoDB.count('book-list', {}, function(err, count) {
+        MongoDB.count('book-list', conditions, function(err, count) {
             if (err) throw err;
             return res.json({
                 code: 0,
@@ -61,18 +78,32 @@ exports.addBookList = function(req, res, next) {
  */
 
 exports.delateBooklistById = function(req, res, next) {
+    const limit = 10;
     const id = req.body.id;
     MongoDB.findById('book-list',{_id: id}, function(err, data) {
         if (err) throw err;
         if (data) {
             MongoDB.remove('book-list', {_id: id}, function (err, data) { 
                 if (err) throw err;
-                console.log(data);
-                return res.json({
-                    code: 0,
-                    status: true,
-                    message: '删除成功',
-                    data: []
+                MongoDB.count('book-list', {}, function(err, count) {
+                    // 如果删除的一样,表明已经删除完了
+                    if ((count % limit) == 0) {
+                        return res.json({
+                            code: 0,
+                            status: true,
+                            message: '删除成功',
+                            data: [],
+                            p: Math.floor(count % limit) - 1
+                        })
+                    } else {
+                        return res.json({
+                            code: 0,
+                            status: true,
+                            message: '删除成功',
+                            data: [],
+                            p: Math.ceil(count / limit)
+                        })
+                    }
                 })
              })
         }
@@ -224,3 +255,11 @@ exports.borrowingById = function(req, res) {
     })
 }
 
+/**
+ * chart图
+ */
+exports.bookCount = function(req, res) {
+    MongoDB.save('analyze', {}, function(err, data) {
+        console.log(data, '231312')
+    })
+}

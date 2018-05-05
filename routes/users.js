@@ -363,7 +363,7 @@ exports.ChangeUserPassword = function(req, res) {
             return res.json({
               code: 0,
               message:' 密码重置失败',
-              type:true,
+              type:false,
               data: null
             })
           }
@@ -372,7 +372,7 @@ exports.ChangeUserPassword = function(req, res) {
         return res.json({
           code: 0,
           message:' 密保不正确',
-          type:true,
+          type:false,
           data: null
         })        
       }
