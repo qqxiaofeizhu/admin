@@ -16,8 +16,10 @@
     "serve-favicon": "~2.4.5"
   },
   "devDependencies": {
+    "cheerio": "^1.0.0-rc.2",
     "jsonwebtoken": "^8.1.0",
     "mongoose": "^5.0.0-rc2",
-    "pomelo-logger": "^0.1.7"
+    "pomelo-logger": "^0.1.7",
+    "superagent": "^3.8.3"
   }
 }

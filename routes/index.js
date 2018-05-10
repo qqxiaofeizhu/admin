@@ -34,6 +34,7 @@ router.get('/get-all-book-entry', list.getAllBookEntry);
 // 添加图书接口
 router.post('/add-book-list', list.addBookList);
 router.post('/get-book-list', list.getBookList);
+router.get('/get-book-count', list.bookCount)
 // 删除图书接口
 router.post('/delate-booklist-by-id', token.checkToken, list.delateBooklistById);
 // 编辑图书接口
@@ -47,4 +48,5 @@ router.post('/add-notice', token.checkToken, notices.addNotice);
 router.get('/get-all-notice', notices.getAllNotice);
 router.post('/delete-notice-by-id', token.checkToken, notices.deleteNoticeById);
 router.get('/get-notice-by-id', token.checkToken, notices.getNoticeById);
+router.post('/add-book-data', list.addBookData);
 module.exports = router;

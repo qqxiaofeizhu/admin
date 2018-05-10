@@ -67,7 +67,17 @@
         },
         "bookCategory": {
             "type": "String",
+            "required": true,
             "labeName": "图书类别"
+        },
+        "bookPosition": {
+            "type": "String",
+            "required": true,
+            "labeName": "图书位置"            
+        },
+        "EbooksUrl": {
+            "type": "String",
+            "labeName": "电子版链接"                 
         }
     },
     "notice": {

@@ -320,7 +320,7 @@ exports.ReturnTheBook = function (req, res) {
                   return res.json({
                     code: 0,
                     data: null,
-                    message: '还书成功！',
+                    message: '我们已经将您的申请发送至图书馆，请您到图书馆内还书！',
                     type: true
                   })
                 }

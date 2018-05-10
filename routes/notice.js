@@ -65,14 +65,14 @@ exports.addNotice = function(req, res, next) {
  * 获取所有的公告
  */
 exports.getAllNotice = function(req, res, next) {
-    MongoDB.find('notice', {}, function(err, allNotice) {
+    MongoDB.find('notice', {},function(err, allNotice) {
         if (err) throw err;
         if (allNotice) {
             return res.json ({
                 code: 0,
                 message: '获取公告成功',
                 type: true,
-                data: allNotice
+                data: allNotice.reverse()
             })
         } else {
             return res.json ({
@@ -135,4 +135,3 @@ exports.deleteNoticeById = function(req, res) {
         }
     })
  }
-
